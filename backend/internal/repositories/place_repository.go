@@ -39,7 +39,7 @@ func (r *PlaceRepository) GetAll() ([]models.Place, error) {
 
 // Create insere um novo local no banco
 func (r *PlaceRepository) Create(p *models.Place) error {
-	query := "INSERT INTO places (name, category, lat, lng) VALUES (?, ?, ?, ?, ?)"
+	query := "INSERT INTO places (name, category, lat, lng) VALUES (?, ?, ?, ?)"
 	// O Exec executa o comando sem esperar linhas de retorno (DML)
 	_, err := r.db.Exec(query, p.Name, p.Category, p.Lat, p.Lng)
 	return err

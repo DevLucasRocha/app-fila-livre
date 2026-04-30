@@ -6,31 +6,43 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/go-sql-driver/mysql" //driver do MySQL
+	"github.com/DevLucasRocha/app-fila-livre/backend/internal/handlers"
+	"github.com/DevLucasRocha/app-fila-livre/backend/internal/repositories"
+	"github.com/DevLucasRocha/app-fila-livre/backend/internal/services"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	// FIXME: Externalizar credenciais para variáveis de ambiente (.env) antes do deploy em produção.
-	// O formato no MySQL é: usuario:senha@tcp(host:porta)/banco?opcoes
+	// define a string de conexão para o meu container MySQL
 	connStr := "admin:admin@tcp(127.0.0.1:3306)/fila_livre?parseTime=true"
 
 	db, err := sql.Open("mysql", connStr)
 	if err != nil {
-		log.Fatalf("falha ao inicializar a configuração do banco de dados: %v", err)
+		log.Fatalf("Eu falhei ao configurar o banco: %v", err)
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		log.Fatalf("falha ao estabelecer conexao com o banco de dados: %v", err)
+		log.Fatalf("Eu não consegui conectar ao MySQL: %v", err)
 	}
-	fmt.Println("Conexão com o banco de dados 'fila_livre' estabelecida com sucesso via MySQL.")
+	fmt.Println("Conexão estabelecida com sucesso via MySQL.")
 
-	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "API do Fila Livre operando normalmente com MySQL.")
+	// define as camadas seguindo a ordem de dependência
+	repo := repositories.NewPlaceRepository(db)
+	service := services.NewPlaceService(repo)
+	handler := handlers.NewPlaceHandler(service)
+
+	// define as rotas da minha API
+	http.HandleFunc("/api/v1/places", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			handler.GetPlaces(w, r)
+		} else if r.Method == http.MethodPost {
+			handler.CreatePlace(w, r)
+		}
 	})
 
 	fmt.Println("Servidor inicializado e escutando na porta 8080.")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatalf("erro critico na execucao do servidor web: %v", err)
+		log.Fatalf("Eu encontrei um erro crítico no servidor: %v", err)
 	}
 }

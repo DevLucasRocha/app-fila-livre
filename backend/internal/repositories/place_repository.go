@@ -24,7 +24,8 @@ func (r *PlaceRepository) GetAll() ([]models.Place, error) {
 	}
 	defer rows.Close()
 
-	var places []models.Place
+	places := []models.Place{}
+
 	for rows.Next() {
 		var p models.Place
 		// O Scan copia os valores das colunas do banco para a nossa struct em Go

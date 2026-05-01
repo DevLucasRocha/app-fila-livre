@@ -12,6 +12,23 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// enableCORS configura os cabeçalhos HTTP necessários para permitir requisições de origens externas.
+func enableCORS(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		// Intercepta requisições de preflight (OPTIONS) exigidas pelos navegadores.
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next(w, r)
+	}
+}
+
 func main() {
 	// Configura a conexão com o banco de dados.
 	connStr := "admin:admin@tcp(127.0.0.1:3306)/fila_livre?parseTime=true"
@@ -40,22 +57,22 @@ func main() {
 	reportHandler := handlers.NewReportHandler(reportService)
 
 	// Mapeia a rota de locais.
-	http.HandleFunc("/api/v1/places", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/v1/places", enableCORS(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			placeHandler.GetPlaces(w, r)
 		} else if r.Method == http.MethodPost {
 			placeHandler.CreatePlace(w, r)
 		}
-	})
+	}))
 
 	// Mapeia a rota de relatos.
-	http.HandleFunc("/api/v1/reports", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/v1/reports", enableCORS(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			reportHandler.GetReportsByPlace(w, r)
 		} else if r.Method == http.MethodPost {
 			reportHandler.CreateReport(w, r)
 		}
-	})
+	}))
 
 	fmt.Println("Servidor inicializado e escutando na porta 8080.")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { MapPin, Users, Activity } from 'lucide-react';
 import api from './services/api';
+import PlaceDetails from './pages/PlaceDetails';
 
 // --- TELA INICIAL ---
 function Home() {
@@ -48,7 +49,7 @@ function Home() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {places.map((place) => (
-              <div key={place.id} style={{ backgroundColor: 'white', padding: '15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', position: 'relative' }}>
+              <Link to={`/place/${place.id}`} key={place.id} style={{ display: 'block', textDecoration: 'none', backgroundColor: 'white', padding: '15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', position: 'relative' }}>
                 
                 {/* Indicador de Status (A bolinha colorida) */}
                 <div style={{ position: 'absolute', top: '15px', right: '15px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: getStatusColor(place.current_status) }}></div>
@@ -63,7 +64,7 @@ function Home() {
                   <Users size={16} /> Lotação: <strong>{place.current_status.replace('_', ' ')}</strong>
                 </div>
 
-              </div>
+              </Link>
             ))}
           </div>
         )}
@@ -78,6 +79,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/place/:id" element={<PlaceDetails />} /> {/* NOVA ROTA AQUI */}
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,40 @@
+/* Configurar transições globais para a troca de tema (Dark/Light) */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Criar efeito de flutuação para os cards da lista */
+.card-hover {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* Criar efeito de clique (press) para os botões de votação */
+.btn-animate {
+  transition: transform 0.1s ease, filter 0.2s ease;
+}
+.btn-animate:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+}
+.btn-animate:active {
+  transform: scale(0.96);
+}
+
+/* Ocultar barra de rolagem mantendo a funcionalidade */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}

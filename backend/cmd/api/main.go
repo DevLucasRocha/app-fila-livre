@@ -27,14 +27,16 @@ func main() {
 	}
 	fmt.Println("Conexão estabelecida com sucesso via MySQL.")
 
-	// Inicializa as camadas de Locais (Places).
+	// Inicializa primeiro os Repositórios (acesso ao banco)
 	placeRepo := repositories.NewPlaceRepository(db)
-	placeService := services.NewPlaceService(placeRepo)
-	placeHandler := handlers.NewPlaceHandler(placeService)
-
-	// Inicializa as camadas de Relatos (Reports).
 	reportRepo := repositories.NewReportRepository(db)
+
+	// Inicializa os Serviços injetando os Repositórios correspondentes
+	placeService := services.NewPlaceService(placeRepo, reportRepo)
 	reportService := services.NewReportService(reportRepo)
+
+	// Inicializa os Handlers (rotas HTTP)
+	placeHandler := handlers.NewPlaceHandler(placeService)
 	reportHandler := handlers.NewReportHandler(reportService)
 
 	// Mapeia a rota de locais.

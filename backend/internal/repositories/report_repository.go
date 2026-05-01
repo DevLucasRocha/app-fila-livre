@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/DevLucasRocha/app-fila-livre/backend/internal/models"
 )
@@ -44,6 +45,28 @@ func (r *ReportRepository) GetByPlaceID(placeID int) ([]models.Report, error) {
 	defer rows.Close()
 
 	// Inicializa como slice vazio para garantir retorno de [] em vez de null no JSON.
+	reports := []models.Report{}
+	for rows.Next() {
+		var rep models.Report
+		err := rows.Scan(&rep.ID, &rep.UserID, &rep.PlaceID, &rep.Status, &rep.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		reports = append(reports, rep)
+	}
+	return reports, nil
+}
+
+// GetRecentByPlaceID busca os relatos de um local criados a partir de um momento específico.
+func (r *ReportRepository) GetRecentByPlaceID(placeID int, since time.Time) ([]models.Report, error) {
+	query := "SELECT id, user_id, place_id, status, created_at FROM reports WHERE place_id = ? AND created_at >= ?"
+	rows, err := r.db.Query(query, placeID, since)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Inicializa a lista vazia para garantir o formato JSON adequado.
 	reports := []models.Report{}
 	for rows.Next() {
 		var rep models.Report

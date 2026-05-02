@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { ArrowLeft, CheckCircle2, Sun, Moon } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Sun, Moon, AlertCircle } from 'lucide-react';
 import api from '../services/api'; 
 
 export default function PlaceDetails({ isDark, toggleTheme }) {
@@ -8,6 +8,8 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
   const navigate = useNavigate(); 
   const [selectedVote, setSelectedVote] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false); 
+  // Novo estado para controlar a notificação flutuante
+  const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
   const themeColors = {
     bg: isDark ? '#0f172a' : '#f8fafc',
@@ -32,6 +34,14 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
     marginBottom: '15px'
   };
 
+  const showToast = (message, type) => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: '' });
+      if (type === 'success') navigate('/'); // Volta pra home se deu certo
+    }, 2000);
+  };
+
   const handleConfirm = async () => {
     if (!selectedVote) return;
     setIsSubmitting(true);
@@ -42,16 +52,18 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
         place_id: parseInt(id),
         status: selectedVote
       });
-      navigate('/');
+      // Sucesso! Mostra o toast verde
+      showToast('Relato registrado com sucesso!', 'success');
     } catch (error) {
       console.error("Erro ao enviar relato:", error);
-      alert("Ocorreu um erro na conexão com o servidor.");
+      // Erro! Mostra o toast vermelho em vez do alert()
+      showToast('Falha na conexão com o servidor.', 'error');
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '480px', margin: '0 auto', backgroundColor: themeColors.bg, minHeight: '100vh' }}>
+    <div style={{ maxWidth: '480px', margin: '0 auto', backgroundColor: themeColors.bg, minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       
       <header style={{ backgroundColor: themeColors.header, color: themeColors.headerText, padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -114,6 +126,14 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
           </button>
         )}
       </main>
+
+      {/* Componente Flutuante de Toast Notification */}
+      {toast.show && (
+        <div className="toast-enter" style={{ position: 'absolute', bottom: '30px', left: '20px', right: '20px', backgroundColor: toast.type === 'success' ? '#22c55e' : '#ef4444', color: 'white', padding: '16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)', zIndex: 50 }}>
+          {toast.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+          <span style={{ fontWeight: '600' }}>{toast.message}</span>
+        </div>
+      )}
     </div>
   );
 }

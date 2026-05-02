@@ -1,15 +1,12 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { MapPin, Users, Activity, Search, Moon, Sun } from 'lucide-react';
+import { MapPin, Users, Search, Moon, Sun } from 'lucide-react';
 import api from './services/api';
 import PlaceDetails from './pages/PlaceDetails';
 
-// --- TELA INICIAL ---
 function Home({ isDark, toggleTheme }) {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // 1. Inicializa o estado lendo a Memória Cache do navegador (ou assume o padrão)
   const [searchTerm, setSearchTerm] = useState(() => localStorage.getItem('@FilaLivre:search') || '');
   const [filterCategory, setFilterCategory] = useState(() => localStorage.getItem('@FilaLivre:category') || 'Todos');
 
@@ -19,13 +16,9 @@ function Home({ isDark, toggleTheme }) {
         setPlaces(response.data);
         setLoading(false);
       })
-      .catch(error => {
-        console.error("Erro ao buscar locais:", error);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, []);
 
-  // 2. Atualiza a Memória Cache silenciosamente toda vez que o usuário digita ou clica
   useEffect(() => {
     localStorage.setItem('@FilaLivre:search', searchTerm);
   }, [searchTerm]);
@@ -34,14 +27,15 @@ function Home({ isDark, toggleTheme }) {
     localStorage.setItem('@FilaLivre:category', filterCategory);
   }, [filterCategory]);
 
+  // Paleta de Cores Refinada (Creme e Grafite no modo claro)
   const themeColors = {
-    bg: isDark ? '#0f172a' : '#f8fafc',
+    bg: isDark ? '#0f172a' : '#fff9f2', 
     card: isDark ? '#1e293b' : '#ffffff',
-    text: isDark ? '#f8fafc' : '#1e293b',
-    subtext: isDark ? '#94a3b8' : '#64748b',
-    border: isDark ? '#334155' : '#e2e8f0',
-    header: isDark ? '#1e293b' : '#2563eb',
-    headerText: isDark ? '#f8fafc' : '#ffffff'
+    text: isDark ? '#f8fafc' : '#2d3436', 
+    subtext: isDark ? '#94a3b8' : '#7f8c8d',
+    border: isDark ? '#334155' : '#e0d5c1', 
+    header: isDark ? '#1e293b' : '#3d3d3d', 
+    headerText: isDark ? '#f8fafc' : '#fff9f2'
   };
 
   const getStatusColor = (status) => {
@@ -53,58 +47,48 @@ function Home({ isDark, toggleTheme }) {
     }
   };
 
- // Função que remove acentos e deixa tudo em minúsculo
-  const removeAcentos = (texto) => {
-    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  };
+  const removeAcentos = (texto) => texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-  // Filtro Inteligente
   const filteredPlaces = places.filter(place => {
-    // Aplica a normalização no nome do local e no que o usuário digitou
-    const nomeNormalizado = removeAcentos(place.name);
-    const buscaNormalizada = removeAcentos(searchTerm);
-    
-    const matchSearch = nomeNormalizado.includes(buscaNormalizada);
+    const matchSearch = removeAcentos(place.name).includes(removeAcentos(searchTerm));
     const matchCategory = filterCategory === 'Todos' || place.category === filterCategory;
-    
     return matchSearch && matchCategory;
   });
 
   return (
-    <div style={{ maxWidth: '480px', margin: '0 auto', backgroundColor: themeColors.bg, minHeight: '100vh', paddingBottom: '20px' }}>
+    <div style={{ maxWidth: '480px', margin: '0 auto', backgroundColor: themeColors.bg, minHeight: '100vh', paddingBottom: '20px', transition: 'background 0.3s' }}>
       
-      <header style={{ backgroundColor: themeColors.header, color: themeColors.headerText, padding: '20px', textAlign: 'center', borderBottom: `3px solid ${isDark ? '#3b82f6' : '#1d4ed8'}`, position: 'relative' }}>
-        <button onClick={toggleTheme} style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: themeColors.headerText, cursor: 'pointer' }}>
+      <header style={{ backgroundColor: themeColors.header, color: themeColors.headerText, padding: '25px 20px', textAlign: 'center', position: 'relative', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+        <button onClick={toggleTheme} style={{ position: 'absolute', top: '25px', right: '20px', background: 'none', border: 'none', color: themeColors.headerText, cursor: 'pointer' }}>
           {isDark ? <Sun size={24} /> : <Moon size={24} />}
         </button>
-        <h1 style={{ margin: 0, fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-          <Activity size={28} color={isDark ? "#3b82f6" : "#ffffff"} /> Fila Livre
+        <h1 style={{ margin: 0, fontSize: '26px', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+          <Users size={32} /> Fila Livre
         </h1>
-        <p style={{ margin: '5px 0 0', fontSize: '14px', opacity: 0.9 }}>Monitoramento em Tempo Real</p>
+        <p style={{ margin: '5px 0 0', fontSize: '13px', opacity: 0.8, fontWeight: '500', letterSpacing: '0.5px' }}>Monitoramento em Tempo Real</p>
       </header>
 
-      <main style={{ padding: '0 15px', marginTop: '15px' }}>
-        
-        <div style={{ position: 'relative', marginBottom: '15px' }}>
-          <Search size={20} color={themeColors.subtext} style={{ position: 'absolute', left: '15px', top: '12px' }} />
+      <main style={{ padding: '0 15px', marginTop: '20px' }}>
+        <div style={{ position: 'relative', marginBottom: '20px' }}>
+          <Search size={20} color={themeColors.subtext} style={{ position: 'absolute', left: '15px', top: '14px' }} />
           <input 
             type="text" 
             placeholder="Buscar unidade..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%', padding: '12px 15px 12px 45px', borderRadius: '12px', border: `1px solid ${themeColors.border}`, backgroundColor: themeColors.card, color: themeColors.text, fontSize: '16px', outline: 'none' }}
+            style={{ width: '100%', padding: '14px 15px 14px 48px', borderRadius: '14px', border: `1px solid ${themeColors.border}`, backgroundColor: themeColors.card, color: themeColors.text, fontSize: '16px', outline: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '5px' }}>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '25px', overflowX: 'auto', paddingBottom: '8px' }}>
           {['Todos', 'Hospital', 'Lotérica'].map(cat => (
             <button 
               key={cat}
               onClick={() => setFilterCategory(cat)}
-              className="btn-animate"
-              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', fontWeight: '600', cursor: 'pointer', whiteSpace: 'nowrap',
+              style={{ padding: '10px 20px', borderRadius: '25px', border: 'none', fontWeight: '700', cursor: 'pointer', whiteSpace: 'nowrap', transition: '0.2s',
                 backgroundColor: filterCategory === cat ? '#3b82f6' : themeColors.card,
                 color: filterCategory === cat ? '#ffffff' : themeColors.text,
+                boxShadow: filterCategory === cat ? '0 4px 10px rgba(59, 130, 246, 0.4)' : 'none',
                 border: filterCategory !== cat ? `1px solid ${themeColors.border}` : 'none'
               }}
             >
@@ -113,35 +97,28 @@ function Home({ isDark, toggleTheme }) {
           ))}
         </div>
 
-       {loading ? (
+        {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            {/* Gera 4 blocos de Skeleton simulando os cards */}
             {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="animate-pulse" style={{ backgroundColor: themeColors.card, padding: '18px', borderRadius: '16px', border: `1px solid ${themeColors.border}`, height: '110px' }}>
-                <div style={{ width: '60%', height: '20px', backgroundColor: themeColors.border, borderRadius: '4px', marginBottom: '15px' }}></div>
-                <div style={{ width: '40%', height: '15px', backgroundColor: themeColors.border, borderRadius: '4px', marginBottom: '10px' }}></div>
-                <div style={{ width: '50%', height: '15px', backgroundColor: themeColors.border, borderRadius: '4px' }}></div>
+              <div key={n} className="animate-pulse" style={{ backgroundColor: themeColors.card, padding: '20px', borderRadius: '18px', border: `1px solid ${themeColors.border}`, height: '120px' }}>
+                <div style={{ width: '60%', height: '22px', backgroundColor: themeColors.border, borderRadius: '4px', marginBottom: '15px' }}></div>
+                <div style={{ width: '40%', height: '16px', backgroundColor: themeColors.border, borderRadius: '4px' }}></div>
               </div>
             ))}
           </div>
         ) : (
-
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            {filteredPlaces.length === 0 && <p style={{ textAlign: 'center', color: themeColors.subtext }}>Nenhum local encontrado.</p>}
+            {filteredPlaces.length === 0 && <p style={{ textAlign: 'center', color: themeColors.subtext, marginTop: '30px' }}>Nenhum local no radar.</p>}
             
             {filteredPlaces.map((place) => (
-              <Link to={`/place/${place.id}`} key={place.id} className="card-hover" style={{ display: 'block', textDecoration: 'none', backgroundColor: themeColors.card, padding: '18px', borderRadius: '16px', border: `1px solid ${themeColors.border}`, position: 'relative' }}>
-                
-                <div style={{ position: 'absolute', top: '18px', right: '18px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: getStatusColor(place.current_status || 'sem_dados'), boxShadow: isDark ? `0 0 8px ${getStatusColor(place.current_status || 'sem_dados')}80` : 'none' }}></div>
-
-                <h3 style={{ margin: '0 0 10px', fontSize: '18px', color: themeColors.text, fontWeight: '600', paddingRight: '20px' }}>{place.name}</h3>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: themeColors.subtext, fontSize: '14px', marginBottom: '8px' }}>
+              <Link to={`/place/${place.id}`} key={place.id} style={{ display: 'block', textDecoration: 'none', backgroundColor: themeColors.card, padding: '20px', borderRadius: '18px', border: `1px solid ${themeColors.border}`, position: 'relative', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', transition: 'transform 0.2s' }}>
+                <div style={{ position: 'absolute', top: '20px', right: '20px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusColor(place.current_status || 'sem_dados'), boxShadow: `0 0 10px ${getStatusColor(place.current_status || 'sem_dados')}60` }}></div>
+                <h3 style={{ margin: '0 0 10px', fontSize: '19px', color: themeColors.text, fontWeight: '700' }}>{place.name}</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: themeColors.subtext, fontSize: '14px', marginBottom: '10px' }}>
                   <MapPin size={16} /> {place.category}
                 </div>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: themeColors.text, fontSize: '14px' }}>
-                  <Users size={16} /> Lotação: <strong style={{ color: getStatusColor(place.current_status || 'sem_dados'), textTransform: 'capitalize' }}>{(place.current_status || 'sem dados').replace('_', ' ')}</strong>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: themeColors.text, fontSize: '15px', fontWeight: '600' }}>
+                  <Users size={18} color={themeColors.subtext} /> Lotação: <span style={{ color: getStatusColor(place.current_status || 'sem_dados') }}>{(place.current_status || 'desconhecido').replace('_', ' ')}</span>
                 </div>
               </Link>
             ))}
@@ -152,13 +129,8 @@ function Home({ isDark, toggleTheme }) {
   );
 }
 
-// --- ROTAS E ESTADO GLOBAL ---
 function App() {
-  // 3. Aplica o mesmo conceito de Cache para o Tema Claro/Escuro
-  const [isDark, setIsDark] = useState(() => {
-    const savedTheme = localStorage.getItem('@FilaLivre:theme');
-    return savedTheme ? JSON.parse(savedTheme) : true; // Dark mode por padrão
-  });
+  const [isDark, setIsDark] = useState(() => JSON.parse(localStorage.getItem('@FilaLivre:theme')) ?? true);
 
   const toggleTheme = () => {
     setIsDark(!isDark);

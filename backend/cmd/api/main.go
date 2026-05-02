@@ -31,7 +31,7 @@ func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 
 func main() {
 	// Configura a conexão com o banco de dados.
-	connStr := "admin:admin@tcp(127.0.0.1:3306)/fila_livre?parseTime=true"
+	connStr := "root:admin@tcp(127.0.0.1:3306)/fila_livre?parseTime=true"
 
 	db, err := sql.Open("mysql", connStr)
 	if err != nil {

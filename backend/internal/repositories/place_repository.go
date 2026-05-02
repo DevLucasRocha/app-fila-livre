@@ -17,7 +17,7 @@ func NewPlaceRepository(db *sql.DB) *PlaceRepository {
 
 // GetAll busca todos os locais no MySQL
 func (r *PlaceRepository) GetAll() ([]models.Place, error) {
-	query := "SELECT id, name, category, lat, lng, created_at FROM places"
+	query := `SELECT id, name, category, lat, lng, address, business_hours, peak_times, quiet_times FROM places`
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (r *PlaceRepository) GetAll() ([]models.Place, error) {
 	for rows.Next() {
 		var p models.Place
 		// O Scan copia os valores das colunas do banco para a nossa struct em Go
-		err := rows.Scan(&p.ID, &p.Name, &p.Category, &p.Lat, &p.Lng, &p.CreatedAt)
+		err := rows.Scan(&p.ID, &p.Name, &p.Category, &p.Lat, &p.Lng, &p.Address, &p.BusinessHours, &p.PeakTimes, &p.QuietTimes)
 		if err != nil {
 			return nil, err
 		}
@@ -40,8 +40,8 @@ func (r *PlaceRepository) GetAll() ([]models.Place, error) {
 
 // Create insere um novo local no banco
 func (r *PlaceRepository) Create(p *models.Place) error {
-	query := "INSERT INTO places (name, category, lat, lng) VALUES (?, ?, ?, ?)"
+	query := "INSERT INTO places (name, category, lat, lng, address, business_hours, peak_times, quiet_times) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 	// O Exec executa o comando sem esperar linhas de retorno (DML)
-	_, err := r.db.Exec(query, p.Name, p.Category, p.Lat, p.Lng)
+	_, err := r.db.Exec(query, p.Name, p.Category, p.Lat, p.Lng, p.Address, p.BusinessHours, p.PeakTimes, p.QuietTimes)
 	return err
 }

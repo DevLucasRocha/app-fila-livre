@@ -11,5 +11,9 @@ type Place struct {
 	Lat           float64   `json:"lat"`
 	Lng           float64   `json:"lng"`
 	CreatedAt     time.Time `json:"created_at"`
-	CurrentStatus string    `json:"current_status"` // serve para indicar se o local está aberto ou fechado
+	CurrentStatus string    `json:"current_status"` // indicar se o local está aberto ou fechado
+	Address       string    `json:"address"`        // indicar o endereço do local
+	BusinessHours string    `json:"business_hours"` // indicar os horários de funcionamento
+	PeakTimes     string    `json:"peak_times"`     // indica os horários de pico
+	QuietTimes    string    `json:"quiet_times"`    // indica os horários mais tranquilos
 }

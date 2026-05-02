@@ -94,18 +94,18 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Calendar size={18} color={themeColors.subtext} />
                 <div style={{ fontSize: '14px' }}>
-                    <span style={{ color: themeColors.subtext }}>Horário: </span>
+                    <span style={{ color: themeColors.subtext }}><strong>Horário: </strong></span>
                     <span style={{ color: themeColors.text, fontWeight: '600' }}>{place?.business_hours}</span>
                 </div>
             </div>
 
             <div style={{ padding: '14px', backgroundColor: isDark ? '#ef444415' : '#ef444408', borderRadius: '12px', borderLeft: '5px solid #ef4444' }}>
-                <span style={{ display: 'block', fontSize: '10px', color: '#ef4444', fontWeight: '900', textTransform: 'uppercase', marginBottom: '4px' }}>Pico Estimado (Evite)</span>
+                <span style={{ display: 'block', fontSize: '10px', color: '#ef4444', fontWeight: '900', textTransform: 'uppercase', marginBottom: '4px' }}>Pico Estimado</span>
                 <span style={{ fontSize: '15px', color: themeColors.text, fontWeight: '700' }}>{place?.peak_times}</span>
             </div>
 
             <div style={{ padding: '14px', backgroundColor: isDark ? '#22c55e15' : '#22c55e08', borderRadius: '12px', borderLeft: '5px solid #22c55e' }}>
-                <span style={{ display: 'block', fontSize: '10px', color: '#22c55e', fontWeight: '900', textTransform: 'uppercase', marginBottom: '4px' }}>Melhor Horário (Tranquilo)</span>
+                <span style={{ display: 'block', fontSize: '10px', color: '#22c55e', fontWeight: '900', textTransform: 'uppercase', marginBottom: '4px' }}>Melhor Horário</span>
                 <span style={{ fontSize: '15px', color: themeColors.text, fontWeight: '700' }}>{place?.quiet_times}</span>
             </div>
           </div>

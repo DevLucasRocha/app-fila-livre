@@ -6,12 +6,16 @@ CREATE TABLE users (
 );
 
 -- 2. Tabela de Locais
-CREATE TABLE places (
+CREATE TABLE IF NOT EXISTS places (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL,
-    lat DECIMAL(10, 8) NOT NULL,
-    lng DECIMAL(11, 8) NOT NULL,
+    lat DOUBLE NOT NULL,
+    lng DOUBLE NOT NULL,
+    address VARCHAR(255),          
+    business_hours VARCHAR(255),   
+    peak_times VARCHAR(255),                                    
+    quiet_times VARCHAR(255),      
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

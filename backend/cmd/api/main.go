@@ -100,8 +100,13 @@ func main() {
 		}
 	}))
 
-	fmt.Println("Servidor inicializado e escutando na porta 8080.")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	apiPort := os.Getenv("PORT")
+	if apiPort == "" {
+		apiPort = "8080" // Fallback para rodar localmente
+	}
+
+	fmt.Printf("Servidor inicializado e escutando na porta %s.\n", apiPort)
+	if err := http.ListenAndServe(":"+apiPort, nil); err != nil {
 		log.Fatalf("Erro crítico no servidor: %v", err)
 	}
 }

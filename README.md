@@ -10,7 +10,7 @@
 ![MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?style=for-the-badge\&logo=mysql)
 ![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge\&logo=docker)
 
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-em%20deploy-green?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 
 </p>

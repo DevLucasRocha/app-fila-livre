@@ -72,8 +72,7 @@ func main() {
 	placeRepo := repositories.NewPlaceRepository(db)
 	reportRepo := repositories.NewReportRepository(db)
 
-	// Inicializa os Serviços injetando os Repositórios correspondentes
-	// Correção: Removida a vírgula excedente
+	// Inicializar serviços com os repositórios
 	placeService := services.NewPlaceService(placeRepo)
 	reportService := services.NewReportService(reportRepo)
 
@@ -81,13 +80,13 @@ func main() {
 	placeHandler := handlers.NewPlaceHandler(placeService)
 	reportHandler := handlers.NewReportHandler(reportService)
 
-	// Mapeia a rota de locais.
+	// Mapear rota /api/v1/places
 	http.HandleFunc("/api/v1/places", enableCORS(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			// Correção: Atualizado para GetAll
+			// Retornar todos os locais
 			placeHandler.GetAll(w, r)
 		} else if r.Method == http.MethodPost {
-			// Correção: Atualizado para Create
+			// Criar novo local
 			placeHandler.Create(w, r)
 		}
 	}))

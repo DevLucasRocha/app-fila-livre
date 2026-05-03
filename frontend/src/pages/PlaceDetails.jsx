@@ -13,10 +13,10 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
   const [isOnline, setIsOnline] = useState(true);
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
-useEffect(() => {
+  useEffect(() => {
     api.get('/places')
       .then(res => {
-        // Encontra o local específico na lista que veio do banco
+        // Encontrar local pelo ID
         const found = res.data.find(p => p.id === parseInt(id));
         setPlace(found || null);
         setLoading(false);

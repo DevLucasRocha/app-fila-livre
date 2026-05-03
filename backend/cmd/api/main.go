@@ -13,17 +13,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// enableCORS configura os cabeçalhos HTTP necessários para permitir requisições de origens externas.
+// Permitir CORS nas rotas
 func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Permitir usos básicos de CORS para desenvolvimento local.
+		// Definir cabeçalhos mínimos para CORS
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		// Incluir headers comuns usados pelo frontend (axios envia Accept/Content-Type)
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Accept")
 		w.Header().Set("Access-Control-Allow-Credentials", "false")
 
-		// Responde direto a preflight (OPTIONS) sem chamar o handler de rota.
+		// Responder preflight (OPTIONS) imediatamente
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
 			return

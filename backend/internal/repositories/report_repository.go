@@ -7,19 +7,18 @@ import (
 	"github.com/DevLucasRocha/app-fila-livre/backend/internal/models"
 )
 
-// ReportRepository gerencia as operações de banco de dados para os relatos de fila.
+// Gerir operações de relatos no banco
 type ReportRepository struct {
 	db *sql.DB
 }
 
-// NewReportRepository inicializa uma nova instância do repositório de relatos.
+// Criar novo repositório de relatos
 func NewReportRepository(db *sql.DB) *ReportRepository {
 	return &ReportRepository{db: db}
 }
 
-// Create insere um novo relato no banco de dados e atualiza o status atual do local correspondente.
+// Inserir relato e atualizar status do local
 func (r *ReportRepository) Create(report *models.Report) error {
-	// 1. Insere o relato no histórico
 	query := "INSERT INTO reports (user_id, place_id, status) VALUES (?, ?, ?)"
 
 	result, err := r.db.Exec(query, report.UserID, report.PlaceID, report.Status)
@@ -34,7 +33,7 @@ func (r *ReportRepository) Create(report *models.Report) error {
 
 	report.ID = int(id)
 
-	// 2. O PULO DO GATO: Atualiza o status atual na tabela principal (places)
+	// Atualizar status atual na tabela places
 	updateQuery := "UPDATE places SET current_status = ? WHERE id = ?"
 	_, err = r.db.Exec(updateQuery, report.Status, report.PlaceID)
 	if err != nil {
@@ -44,7 +43,7 @@ func (r *ReportRepository) Create(report *models.Report) error {
 	return nil
 }
 
-// GetByPlaceID busca todos os relatos associados a um local específico.
+// Buscar relatos por ID de local
 func (r *ReportRepository) GetByPlaceID(placeID int) ([]models.Report, error) {
 	query := "SELECT id, user_id, place_id, status, created_at FROM reports WHERE place_id = ?"
 	rows, err := r.db.Query(query, placeID)
@@ -53,7 +52,6 @@ func (r *ReportRepository) GetByPlaceID(placeID int) ([]models.Report, error) {
 	}
 	defer rows.Close()
 
-	// Inicializa como slice vazio para garantir retorno de [] em vez de null no JSON.
 	reports := []models.Report{}
 	for rows.Next() {
 		var rep models.Report
@@ -66,7 +64,7 @@ func (r *ReportRepository) GetByPlaceID(placeID int) ([]models.Report, error) {
 	return reports, nil
 }
 
-// GetRecentByPlaceID busca os relatos de um local criados a partir de um momento específico.
+// Buscar relatos recentes por local a partir de uma data
 func (r *ReportRepository) GetRecentByPlaceID(placeID int, since time.Time) ([]models.Report, error) {
 	query := "SELECT id, user_id, place_id, status, created_at FROM reports WHERE place_id = ? AND created_at >= ?"
 	rows, err := r.db.Query(query, placeID, since)
@@ -75,7 +73,6 @@ func (r *ReportRepository) GetRecentByPlaceID(placeID int, since time.Time) ([]m
 	}
 	defer rows.Close()
 
-	// Inicializa a lista pouca para garantir o formato JSON adequado.
 	reports := []models.Report{}
 	for rows.Next() {
 		var rep models.Report

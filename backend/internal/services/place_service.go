@@ -17,7 +17,7 @@ func NewPlaceService(repo *repositories.PlaceRepository) *PlaceService {
 	return &PlaceService{repo: repo}
 }
 
-// Helper: Extrai as horas do texto do banco e compara com a hora atual
+// Extrair horas do texto e comparar com hora atual
 func isHourInRange(timeText string, currentHour int) bool {
 	if timeText == "" {
 		return false
@@ -35,7 +35,7 @@ func isHourInRange(timeText string, currentHour int) bool {
 	return false
 }
 
-// GetAll aplica as Regras de Negócio e retorna os locais prontos
+// Obter locais aplicando regras de negócio
 func (s *PlaceService) GetAll() ([]models.Place, error) {
 	places, err := s.repo.GetAll()
 	if err != nil {
@@ -54,18 +54,17 @@ func (s *PlaceService) GetAll() ([]models.Place, error) {
 	for i := range places {
 		p := &places[i]
 
-		// --- REGRA 1: Validade do Relato Manual (TTL de 5 minutos) ---
-		// Se o status foi alterado manualmente (não é sem_dados ou vazio)
+		// REGRA 1: Invalidar voto após 5 minutos
 		if p.CurrentStatus != "sem_dados" && p.CurrentStatus != "" {
-			// Verifica se já se passaram mais de 5 minutos desde a última atualização
+			// Verificar TTL de 5 minutos
 			if time.Since(p.UpdatedAt) > 5*time.Minute {
-				p.CurrentStatus = "sem_dados" // O voto expirou, devolve para o sistema adivinhar
+				p.CurrentStatus = "sem_dados"
 			}
 		}
 
 		isFechada := false
 
-		// --- REGRA 2: Horário de Funcionamento (Lotéricas) ---
+		// REGRA 2: Determinar fechamento por horário
 		if p.Category == "Lotérica" {
 			if currentWeekday == time.Sunday {
 				isFechada = true
@@ -86,7 +85,7 @@ func (s *PlaceService) GetAll() ([]models.Place, error) {
 			continue
 		}
 
-		// --- REGRA 3: Inteligência Preditiva de Fila ---
+		// REGRA 3: Aplicar predição de fila quando não houver dados
 		if p.CurrentStatus == "sem_dados" || p.CurrentStatus == "" {
 			p.IsPredicted = true
 

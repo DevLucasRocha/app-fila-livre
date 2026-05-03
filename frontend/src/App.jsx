@@ -144,7 +144,7 @@ function Home({ isDark, toggleTheme }) {
                     {place.current_status.replace('_', ' ')}
                   </span>
                   
-                  {/* Se o Go mandar IsPredicted como true, o Front avisa o usuário */}
+                  {/* Exibir indicação quando status for predito */}
                   {place.is_predicted && (
                     <span style={{ fontSize: '11px', color: themeColors.subtext, marginLeft: '4px', fontWeight: 'normal' }}>
                     </span>

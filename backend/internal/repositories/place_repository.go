@@ -10,12 +10,12 @@ type PlaceRepository struct {
 	db *sql.DB
 }
 
-// NewPlaceRepository cria uma nova instância do repositório
+// Criar novo repositório de locais
 func NewPlaceRepository(db *sql.DB) *PlaceRepository {
 	return &PlaceRepository{db: db}
 }
 
-// GetAll busca todos os locais no MySQL (NOME CORRIGIDO)
+// Buscar todos os locais
 func (r *PlaceRepository) GetAll() ([]models.Place, error) {
 	query := `SELECT id, name, category, lat, lng, address, business_hours, peak_times, quiet_times, current_status, updated_at FROM places`
 

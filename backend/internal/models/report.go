@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-// define a estrutura do relato de fila, mapeando a tabela 'reports'
+// Representar relato de fila
 type Report struct {
 	ID        int       `json:"id"`
 	UserID    int       `json:"user_id"`

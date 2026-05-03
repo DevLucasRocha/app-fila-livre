@@ -66,7 +66,7 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
       
       <header style={{ backgroundColor: themeColors.header, color: themeColors.headerText, padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
         <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: themeColors.headerText, cursor: 'pointer' }}><ArrowLeft size={24} /></button>
-        <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '700' }}>Detalhes da unidade</h2>
+        <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '700' }}>  Detalhes da unidade</h2>
         <div style={{ 
           display: 'flex', alignItems: 'center', gap: '5px', padding: '5px 12px', borderRadius: '20px', 
           backgroundColor: isOnline ? '#ef4444' : '#64748b', color: '#fff', fontSize: '11px', fontWeight: 'bold'

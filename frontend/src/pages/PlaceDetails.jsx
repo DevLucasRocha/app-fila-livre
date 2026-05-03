@@ -13,28 +13,30 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
   const [isOnline, setIsOnline] = useState(true);
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
-  useEffect(() => {
+useEffect(() => {
     api.get('/places')
       .then(res => {
+        // Encontra o local específico na lista que veio do banco
         const found = res.data.find(p => p.id === parseInt(id));
         setPlace(found || null);
         setLoading(false);
         setIsOnline(true);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Erro na API:", err);
         setIsOnline(false);
         setLoading(false);
       });
   }, [id]);
 
   const themeColors = {
-    bg: isDark ? '#0f172a' : '#fff9f2',
-    card: isDark ? '#1e293b' : '#ffffff',
+    bg: isDark ? '#0f172a' : '#fff9f2',             
+    card: isDark ? '#1e293b' : '#fcf5eb',
     text: isDark ? '#f8fafc' : '#2d3436',
-    subtext: isDark ? '#94a3b8' : '#7f8c8d',
+    subtext: isDark ? '#94a3b8' : '#787878',
+    border: isDark ? '#334155' : '#ebdcca',
     header: isDark ? '#1e293b' : '#3d3d3d',
-    headerText: isDark ? '#f8fafc' : '#fff9f2',
-    border: isDark ? '#334155' : '#e0d5c1',
+    headerText: isDark ? '#f8fafc' : '#fff9f2'
   };
 
   const showToast = (message, type) => {
@@ -48,6 +50,8 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
     setIsSubmitting(true);
     try {
       await api.post('/reports', { user_id: 1, place_id: parseInt(id), status: selectedVote });
+      // Notifica o restante da aplicação para refetch dos dados (Home escuta esse evento)
+      window.dispatchEvent(new Event('dataUpdated'));
       showToast('Relato enviado com sucesso!', 'success');
     } catch {
       showToast('Erro ao conectar com o servidor.', 'error');
@@ -62,7 +66,7 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
       
       <header style={{ backgroundColor: themeColors.header, color: themeColors.headerText, padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
         <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: themeColors.headerText, cursor: 'pointer' }}><ArrowLeft size={24} /></button>
-        <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '700' }}>Relatar Estado</h2>
+        <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '700' }}>Detalhes da unidade</h2>
         <div style={{ 
           display: 'flex', alignItems: 'center', gap: '5px', padding: '5px 12px', borderRadius: '20px', 
           backgroundColor: isOnline ? '#ef4444' : '#64748b', color: '#fff', fontSize: '11px', fontWeight: 'bold'
@@ -111,10 +115,10 @@ export default function PlaceDetails({ isDark, toggleTheme }) {
           </div>
         </section>
 
-        <h4 style={{ color: themeColors.text, marginBottom: '15px', fontSize: '17px', fontWeight: '700' }}>Qual o estado atual da fila?</h4>
+        <h4 style={{ color: themeColors.text, marginBottom: '15px', fontSize: '17px', fontWeight: '700' }}>Como está a fila agora?</h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
-            { id: 'vazia', label: 'Tranquila / Vazia', color: '#22c55e' },
+            { id: 'pouca', label: 'Tranquila / Pouca', color: '#22c55e' },
             { id: 'moderada', label: 'Moderada', color: '#eab308' },
             { id: 'cheia', label: 'Lotada / Cheia', color: '#ef4444' }
           ].map((vote) => (

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/DevLucasRocha/app-fila-livre/backend/internal/handlers"
 	"github.com/DevLucasRocha/app-fila-livre/backend/internal/repositories"
@@ -15,11 +16,14 @@ import (
 // enableCORS configura os cabeçalhos HTTP necessários para permitir requisições de origens externas.
 func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Permitir usos básicos de CORS para desenvolvimento local.
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		// Incluir headers comuns usados pelo frontend (axios envia Accept/Content-Type)
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Accept")
+		w.Header().Set("Access-Control-Allow-Credentials", "false")
 
-		// Intercepta requisições de preflight (OPTIONS) exigidas pelos navegadores.
+		// Responde direto a preflight (OPTIONS) sem chamar o handler de rota.
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
 			return
@@ -30,8 +34,29 @@ func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func main() {
-	// Configura a conexão com o banco de dados.
-	connStr := "root:admin@tcp(127.0.0.1:3306)/fila_livre?parseTime=true"
+	// Configura a conexão com o banco de dados usando variáveis de ambiente com fallback.
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		dbUser = "root"
+	}
+	dbPass := os.Getenv("DB_PASS")
+	if dbPass == "" {
+		dbPass = "admin"
+	}
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "127.0.0.1"
+	}
+	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		dbPort = "3306"
+	}
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		dbName = "fila_livre"
+	}
+
+	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPass, dbHost, dbPort, dbName)
 
 	db, err := sql.Open("mysql", connStr)
 	if err != nil {
@@ -49,7 +74,8 @@ func main() {
 	reportRepo := repositories.NewReportRepository(db)
 
 	// Inicializa os Serviços injetando os Repositórios correspondentes
-	placeService := services.NewPlaceService(placeRepo, reportRepo)
+	// Correção: Removida a vírgula excedente
+	placeService := services.NewPlaceService(placeRepo)
 	reportService := services.NewReportService(reportRepo)
 
 	// Inicializa os Handlers (rotas HTTP)
@@ -59,9 +85,11 @@ func main() {
 	// Mapeia a rota de locais.
 	http.HandleFunc("/api/v1/places", enableCORS(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			placeHandler.GetPlaces(w, r)
+			// Correção: Atualizado para GetAll
+			placeHandler.GetAll(w, r)
 		} else if r.Method == http.MethodPost {
-			placeHandler.CreatePlace(w, r)
+			// Correção: Atualizado para Create
+			placeHandler.Create(w, r)
 		}
 	}))
 

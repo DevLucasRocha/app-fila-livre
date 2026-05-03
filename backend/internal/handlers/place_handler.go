@@ -12,40 +12,39 @@ type PlaceHandler struct {
 	service *services.PlaceService
 }
 
-// cria uma nova instância do handler injetando o serviço necessário
-func NewPlaceHandler(s *services.PlaceService) *PlaceHandler {
-	return &PlaceHandler{service: s}
+func NewPlaceHandler(service *services.PlaceService) *PlaceHandler {
+	return &PlaceHandler{service: service}
 }
 
-// gerencia a rota de listagem de locais e retorno os dados em JSON
-func (h *PlaceHandler) GetPlaces(w http.ResponseWriter, r *http.Request) {
-	locais, err := h.service.ListarLocais()
+// GetAll responde à rota GET /places
+func (h *PlaceHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+	// Chamando o método correto com nome padronizado
+	places, err := h.service.GetAll()
 	if err != nil {
-		// responde com erro 500 se algo falhar na busca
 		http.Error(w, "Erro ao buscar locais", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	// serializa os dados para o formato que o frontend espera
-	json.NewEncoder(w).Encode(locais)
+	json.NewEncoder(w).Encode(places)
 }
 
-// receba os dados do novo local e solicito a criação ao serviço
-func (h *PlaceHandler) CreatePlace(w http.ResponseWriter, r *http.Request) {
+// Create responde à rota POST /places
+func (h *PlaceHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var p models.Place
-	// decodifica o corpo da requisição JSON para a minha struct
+
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, "Dados inválidos", http.StatusBadRequest)
 		return
 	}
 
-	if err := h.service.CriarNovoLocal(&p); err != nil {
-		http.Error(w, "Erro ao salvar local", http.StatusInternalServerError)
+	// Chamando o método correto com nome padronizado
+	if err := h.service.Create(&p); err != nil {
+		http.Error(w, "Erro ao criar local", http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	// confirma a criação enviando o objeto de volta
-	json.NewEncoder(w).Encode(p)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Local criado com sucesso!"})
 }

@@ -17,8 +17,9 @@ func NewReportRepository(db *sql.DB) *ReportRepository {
 	return &ReportRepository{db: db}
 }
 
-// Create insere um novo relato no banco de dados e atualiza a struct com o ID gerado.
+// Create insere um novo relato no banco de dados e atualiza o status atual do local correspondente.
 func (r *ReportRepository) Create(report *models.Report) error {
+	// 1. Insere o relato no histórico
 	query := "INSERT INTO reports (user_id, place_id, status) VALUES (?, ?, ?)"
 
 	result, err := r.db.Exec(query, report.UserID, report.PlaceID, report.Status)
@@ -32,6 +33,14 @@ func (r *ReportRepository) Create(report *models.Report) error {
 	}
 
 	report.ID = int(id)
+
+	// 2. O PULO DO GATO: Atualiza o status atual na tabela principal (places)
+	updateQuery := "UPDATE places SET current_status = ? WHERE id = ?"
+	_, err = r.db.Exec(updateQuery, report.Status, report.PlaceID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -66,7 +75,7 @@ func (r *ReportRepository) GetRecentByPlaceID(placeID int, since time.Time) ([]m
 	}
 	defer rows.Close()
 
-	// Inicializa a lista vazia para garantir o formato JSON adequado.
+	// Inicializa a lista pouca para garantir o formato JSON adequado.
 	reports := []models.Report{}
 	for rows.Next() {
 		var rep models.Report

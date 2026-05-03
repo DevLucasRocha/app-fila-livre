@@ -17,7 +17,7 @@ func NewPlaceRepository(db *sql.DB) *PlaceRepository {
 
 // GetAll busca todos os locais no MySQL (NOME CORRIGIDO)
 func (r *PlaceRepository) GetAll() ([]models.Place, error) {
-	query := `SELECT id, name, category, lat, lng, address, business_hours, peak_times, quiet_times FROM places`
+	query := `SELECT id, name, category, lat, lng, address, business_hours, peak_times, quiet_times, current_status, updated_at FROM places`
 
 	rows, err := r.db.Query(query)
 	if err != nil {
@@ -40,6 +40,8 @@ func (r *PlaceRepository) GetAll() ([]models.Place, error) {
 			&p.BusinessHours,
 			&p.PeakTimes,
 			&p.QuietTimes,
+			&p.CurrentStatus,
+			&p.UpdatedAt,
 		)
 		if err != nil {
 			return nil, err

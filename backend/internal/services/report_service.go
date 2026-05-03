@@ -20,11 +20,11 @@ func NewReportService(repo *repositories.ReportRepository) *ReportService {
 // RegistrarRelato valida os dados e envia para o repositório persistir.
 func (s *ReportService) RegistrarRelato(report *models.Report) error {
 	// Validação básica: garante que o status informado é válido.
-	if report.Status != "vazia" && report.Status != "moderada" && report.Status != "cheia" {
-		return errors.New("status inválido: deve ser 'vazia', 'moderada' ou 'cheia'")
+	if report.Status != "pouca" && report.Status != "moderada" && report.Status != "cheia" {
+		return errors.New("status inválido: deve ser 'pouca', 'moderada' ou 'cheia'")
 	}
 
-	// TODO: Adicionar validação para verificar se UserID e PlaceID existem no banco.
+	// TODO: Validar existência de UserID e PlaceID no banco quando necessário.
 
 	return s.repo.Create(report)
 }

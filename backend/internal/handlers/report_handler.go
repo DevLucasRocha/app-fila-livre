@@ -35,7 +35,9 @@ func (h *ReportHandler) CreateReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	// Retorna o relato criado com ID para uso futuro.
 	json.NewEncoder(w).Encode(report)
 }
 

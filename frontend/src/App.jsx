@@ -11,12 +11,27 @@ function Home({ isDark, toggleTheme }) {
   const [filterCategory, setFilterCategory] = useState(() => localStorage.getItem('@FilaLivre:category') || 'Todos');
 
   useEffect(() => {
-    api.get('/places')
-      .then(response => {
-        setPlaces(response.data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const fetchPlaces = () => {
+      setLoading(true);
+      api.get('/places')
+        .then(response => {
+          setPlaces(response.data);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    };
+
+    fetchPlaces();
+
+    const onDataUpdated = () => fetchPlaces();
+    window.addEventListener('dataUpdated', onDataUpdated);
+
+    const interval = setInterval(fetchPlaces, 30000);
+
+    return () => {
+      window.removeEventListener('dataUpdated', onDataUpdated);
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -27,7 +42,6 @@ function Home({ isDark, toggleTheme }) {
     localStorage.setItem('@FilaLivre:category', filterCategory);
   }, [filterCategory]);
 
-  // Paleta de Cores Refinada (Creme e Grafite no modo claro)
   const themeColors = {
     bg: isDark ? '#0f172a' : '#fff9f2', 
     card: isDark ? '#1e293b' : '#ffffff',
@@ -38,11 +52,13 @@ function Home({ isDark, toggleTheme }) {
     headerText: isDark ? '#f8fafc' : '#fff9f2'
   };
 
+  // Adicionamos a cor para Fechada (Cinza/Grafite)
   const getStatusColor = (status) => {
     switch (status) {
-      case 'vazia': return '#4ade80'; 
+      case 'pouca': return '#4ade80'; 
       case 'moderada': return '#facc15'; 
-      case 'cheia': return '#f87171'; 
+      case 'cheia': return '#f87171';
+      case 'fechada': return '#64748b'; 
       default: return '#94a3b8'; 
     }
   };
@@ -112,14 +128,29 @@ function Home({ isDark, toggleTheme }) {
             
             {filteredPlaces.map((place) => (
               <Link to={`/place/${place.id}`} key={place.id} style={{ display: 'block', textDecoration: 'none', backgroundColor: themeColors.card, padding: '20px', borderRadius: '18px', border: `1px solid ${themeColors.border}`, position: 'relative', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', transition: 'transform 0.2s' }}>
-                <div style={{ position: 'absolute', top: '20px', right: '20px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusColor(place.current_status || 'sem_dados'), boxShadow: `0 0 10px ${getStatusColor(place.current_status || 'sem_dados')}60` }}></div>
+                
+                <div style={{ position: 'absolute', top: '20px', right: '20px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: getStatusColor(place.current_status), boxShadow: `0 0 10px ${getStatusColor(place.current_status)}60` }}></div>
+                
                 <h3 style={{ margin: '0 0 10px', fontSize: '19px', color: themeColors.text, fontWeight: '700' }}>{place.name}</h3>
+                
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: themeColors.subtext, fontSize: '14px', marginBottom: '10px' }}>
                   <MapPin size={16} /> {place.category}
                 </div>
+                
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: themeColors.text, fontSize: '15px', fontWeight: '600' }}>
-                  <Users size={18} color={themeColors.subtext} /> Lotação: <span style={{ color: getStatusColor(place.current_status || 'sem_dados') }}>{(place.current_status || 'desconhecido').replace('_', ' ')}</span>
+                  <Users size={18} color={themeColors.subtext} /> 
+                  Fila: 
+                  <span style={{ color: getStatusColor(place.current_status), textTransform: 'capitalize' }}>
+                    {place.current_status.replace('_', ' ')}
+                  </span>
+                  
+                  {/* Se o Go mandar IsPredicted como true, o Front avisa o usuário */}
+                  {place.is_predicted && (
+                    <span style={{ fontSize: '11px', color: themeColors.subtext, marginLeft: '4px', fontWeight: 'normal' }}>
+                    </span>
+                  )}
                 </div>
+
               </Link>
             ))}
           </div>

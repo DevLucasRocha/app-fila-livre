@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS places (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 2. Limpa a tabela antes de inserir
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE reports;
 TRUNCATE TABLE places;
 
 -- 3. Injeta todos os dados originais (Seeding)

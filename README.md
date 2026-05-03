@@ -8,8 +8,9 @@
 ![React](https://img.shields.io/badge/Frontend-React-20232A?style=for-the-badge\&logo=react)
 ![Vite](https://img.shields.io/badge/Build-Vite-646CFF?style=for-the-badge\&logo=vite)
 ![MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?style=for-the-badge\&logo=mysql)
-![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge\&logo=docker)
 
+
+![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge\&logo=docker)
 ![Status](https://img.shields.io/badge/status-em%20deploy-green?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 

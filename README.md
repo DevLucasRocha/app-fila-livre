@@ -39,7 +39,6 @@ Bash
 # Sobe o banco na porta 3306
 docker run --name fila-livre-mysql -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=fila_livre -p 3306:3306 -d mysql:8.0
 
-# Injeta a estrutura (no Windows/PowerShell utilize: chcp 65001 antes para garantir o UTF-8)
 Get-Content database\init.sql | docker exec -i fila-livre-mysql mysql -u root -padmin fila_livre
 2. Backend (Golang API)
 Em um terminal, inicie o servidor Go:

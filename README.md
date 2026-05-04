@@ -30,6 +30,8 @@ O **Fila Livre** resolve esse problema combinando:
 Mesmo sem dados recentes, o sistema calcula automaticamente a ocupação com base no histórico e horário atual.
 
 ---
+## APP NO AR!
+* esperimente e de seu feedback : [Fila Livre:(https://app-fila-livre.vercel.app/)]
 
 ## 🚀 Principais Features
 

@@ -31,7 +31,7 @@ Mesmo sem dados recentes, o sistema calcula automaticamente a ocupação com bas
 
 ---
 ## APP NO AR!
-* esperimente e de seu feedback : [Fila Livre:(https://app-fila-livre.vercel.app/)]
+* esperimente e de seu feedback : [Fila Livre](https://app-fila-livre.vercel.app/)
 
 ## 🚀 Principais Features
 
@@ -175,3 +175,9 @@ Projeto desenvolvido com foco em:
 * Integridade de dados
 * Performance
 * Utilidade pública
+
+## 🌐 Contato
+
+📧 [lucas_santos239@outlook.com](mailto:lucas_santos239@outlook.com)  
+🔗 [LinkedIn](https://www.linkedin.com/in/lucas-hssrs/)
+

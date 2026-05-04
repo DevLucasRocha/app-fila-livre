@@ -31,7 +31,8 @@ Mesmo sem dados recentes, o sistema calcula automaticamente a ocupação com bas
 
 ---
 ## APP NO AR!
-* esperimente e de seu feedback : [Fila Livre](https://app-fila-livre.vercel.app/)
+* experimente e de seu feedback!
+* [Fila Livre](https://app-fila-livre.vercel.app/)
 
 ## 🚀 Principais Features
 

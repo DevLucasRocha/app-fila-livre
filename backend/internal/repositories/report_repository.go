@@ -33,9 +33,9 @@ func (r *ReportRepository) Create(report *models.Report) error {
 
 	report.ID = int(id)
 
-	// Atualizar status atual na tabela places
-	updateQuery := "UPDATE places SET current_status = ? WHERE id = ?"
-	_, err = r.db.Exec(updateQuery, report.Status, report.PlaceID)
+	// Atualizar status atual e timestamp de atualização na tabela places
+	updateQuery := "UPDATE places SET current_status = ?, updated_at = ? WHERE id = ?"
+	_, err = r.db.Exec(updateQuery, report.Status, time.Now(), report.PlaceID)
 	if err != nil {
 		return err
 	}

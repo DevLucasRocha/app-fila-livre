@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, Users, Search, Moon, Sun } from 'lucide-react';
 import api from './services/api';
 import PlaceDetails from './pages/PlaceDetails';
+import Footer from './components/Footer';
 
 function Home({ isDark, toggleTheme }) {
   const [places, setPlaces] = useState([]);
@@ -72,7 +73,7 @@ function Home({ isDark, toggleTheme }) {
   });
 
   return (
-    <div style={{ maxWidth: '480px', margin: '0 auto', backgroundColor: themeColors.bg, minHeight: '100vh', paddingBottom: '20px', transition: 'background 0.3s' }}>
+    <div style={{ maxWidth: '480px', margin: '0 auto', backgroundColor: themeColors.bg, minHeight: '100vh', paddingBottom: '80px', transition: 'background 0.3s' }}>
       
       <header style={{ backgroundColor: themeColors.header, color: themeColors.headerText, padding: '25px 20px', textAlign: 'center', position: 'relative', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
         <button onClick={toggleTheme} style={{ position: 'absolute', top: '25px', right: '20px', background: 'none', border: 'none', color: themeColors.headerText, cursor: 'pointer' }}>
@@ -156,6 +157,8 @@ function Home({ isDark, toggleTheme }) {
           </div>
         )}
       </main>
+
+      <Footer isDark={isDark} />
     </div>
   );
 }

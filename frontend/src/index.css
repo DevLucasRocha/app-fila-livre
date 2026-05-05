@@ -80,3 +80,52 @@ body {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Variáveis de tema para o rodapé (suporta dark e light modes) */
+:root {
+  --footer-bg: #fbf9f7;
+  --footer-text: #1f2937;
+  --footer-link: #2563eb;
+  --footer-border: #e7e5e4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --footer-bg: #071229;
+    --footer-text: #dbeafe;
+    --footer-link: #82aaff;
+    --footer-border: #0f1724;
+  }
+}
+
+.app-footer {
+  background: var(--footer-bg);
+  color: var(--footer-text);
+  border-top: 1px solid var(--footer-border);
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+.footer-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.footer-links a {
+  color: var(--footer-link);
+  text-decoration: none;
+  font-weight: 600;
+  margin: 0 6px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.footer-left strong { font-weight: 700; }
+
+.dot { opacity: 0.6; margin: 0 4px; }
